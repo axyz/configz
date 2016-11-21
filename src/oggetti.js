@@ -3,29 +3,29 @@ const net = require('net');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const Config = require('./config.js');
+const KeyValueStore = require('./key-value-store.js');
 const getPath = require('./routes/get-path.js');
 const postPath = require('./routes/post-path.js');
 const deletePath = require('./routes/delete-path.js');
 const NullStorage = require('./storages/null.js');
 
-class Configz {
+class Oggetti {
     constructor({
         app,
-        config,
+        keyValue,
         storage = new NullStorage(),
         tcpSocketUpdates = false,
         webSocketUpdates = false,
     } = {}) {
         this._server = app || express();
         this._server.use(bodyParser.json());
-        this._config = config || new Config(storage, this._broadcast.bind(this));
+        this._keyValue = keyValue || new KeyValueStore(storage, this._broadcast.bind(this));
         this._tcpSocketUpdates = tcpSocketUpdates;
         this._broadcastEnabled = tcpSocketUpdates || webSocketUpdates;
 
-        this._server.get('/(*)', getPath(this._config));
-        this._server.post('/(*)', postPath(this._config));
-        this._server.delete('/(*)', deletePath(this._config));
+        this._server.get('/(*)', getPath(this._keyValue));
+        this._server.post('/(*)', postPath(this._keyValue));
+        this._server.delete('/(*)', deletePath(this._keyValue));
 
         if (tcpSocketUpdates) this._setupTcpSocketUpdateServer();
     }
@@ -41,7 +41,7 @@ class Configz {
     }
 
     _broadcast(message) {
-        this._broadcastTcp.bind(this, message);
+        this._broadcastTcp(message);
     }
 
     _setupTcpSocketUpdateServer() {
@@ -62,11 +62,11 @@ class Configz {
             this._broadcastTcp({
                 type: 'init',
                 body: {
-                    data: this._config.getData(),
+                    data: this._keyValue.getData(),
                 },
             });
         }
     }
 }
 
-module.exports = Configz;
+module.exports = Oggetti;

@@ -1,12 +1,13 @@
 {
-  "name": "configz",
+  "name": "oggetti",
   "version": "0.0.1",
-  "description": "rest config server with socket based updates and pluggable persistency layers",
+  "description": "rest object/config server with socket based updates and pluggable persistency layers",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
+    "objects",
     "config",
     "server",
     "socket",

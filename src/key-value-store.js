@@ -2,7 +2,7 @@ const getIn = require('./support/get-in.js');
 const setIn = require('./support/set-in.js');
 const deleteIn = require('./support/delete-in.js');
 
-class Config {
+class KeyValueStore {
     constructor(storage, broadcast = () => {}) {
         this._storage = storage;
         this._broadcast = broadcast;
@@ -14,8 +14,6 @@ class Config {
     }
 
     getKey(key) {
-        console.log(key)
-        console.log(this._data)
         if (Array.isArray(key)) {
             return getIn(this._data, key, null);
         }
@@ -63,4 +61,4 @@ class Config {
     }
 }
 
-module.exports = Config;
+module.exports = KeyValueStore;
