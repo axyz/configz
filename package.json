@@ -1,0 +1,24 @@
+{
+  "name": "configz",
+  "version": "0.0.1",
+  "description": "rest config server with socket based updates and pluggable persistency layers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "config",
+    "server",
+    "socket",
+    "tcp",
+    "json",
+    "options",
+    "configuration"
+  ],
+  "author": "Andrea Moretti <axyzxp@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0"
+  }
+}
