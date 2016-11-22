@@ -1,5 +1,8 @@
-class NullStorage {
+const EventEmitter = require('events');
+
+class NullStorage extends EventEmitter {
     constructor(data) {
+        super();
         this._data = data || {};
     }
 

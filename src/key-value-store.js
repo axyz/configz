@@ -1,12 +1,19 @@
 const getIn = require('./support/get-in.js');
 const setIn = require('./support/set-in.js');
 const deleteIn = require('./support/delete-in.js');
+const EventEmitter = require('events');
 
-class KeyValueStore {
-    constructor(storage, broadcast = () => {}) {
+class KeyValueStore extends EventEmitter {
+    constructor(storage) {
+        super();
         this._storage = storage;
-        this._broadcast = broadcast;
         this._data = this._storage.getData();
+
+        // storage is an EventEmitter and may emit 'change' events to refresh
+        // the data, e.g. listening on S3 bucket updates
+        this._storage.on('change', (data) => {
+            this._data = data;
+        });
     }
 
     getData() {
@@ -28,14 +35,11 @@ class KeyValueStore {
             this._data[key] = body.value;
         }
 
-        this._broadcast({
-            type: 'update',
-            body: {
-                data: this.getData(),
-                action: 'set',
-                key,
-                value: body.value,
-            },
+        this.emit('update', {
+            type: 'set',
+            data: this.getData(),
+            key,
+            value: body.value,
         });
 
         this._storage.update(this._data, key, body.value);
@@ -48,14 +52,11 @@ class KeyValueStore {
             delete this._data[key];
         }
 
-        this._broadcast({
-            type: 'update',
-            body: {
-                data: this.getData(),
-                action: 'delete',
-                key,
-            },
-        })
+        this.emit('update', {
+            type: 'delete',
+            data: this.getData(),
+            key,
+        });
 
         this._storage.deleteKey(this._data, key);
     }

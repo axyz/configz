@@ -1,6 +1,6 @@
 {
   "name": "oggetti",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "rest object/config server with socket based updates and pluggable persistency layers",
   "main": "index.js",
   "scripts": {

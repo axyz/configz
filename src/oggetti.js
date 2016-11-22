@@ -19,9 +19,13 @@ class Oggetti {
     } = {}) {
         this._server = app || express();
         this._server.use(bodyParser.json());
-        this._keyValue = keyValue || new KeyValueStore(storage, this._broadcast.bind(this));
+        this._keyValue = keyValue || new KeyValueStore(storage);
         this._tcpSocketUpdates = tcpSocketUpdates;
         this._broadcastEnabled = tcpSocketUpdates || webSocketUpdates;
+
+        if (this._broadcastEnabled) {
+            this._keyValue.on('update', this._broadcast.bind(this));
+        }
 
         this._server.get('/(*)', getPath(this._keyValue));
         this._server.post('/(*)', postPath(this._keyValue));
